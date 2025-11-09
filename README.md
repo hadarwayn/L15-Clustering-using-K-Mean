@@ -122,7 +122,8 @@ The application window should appear with the title **"🎯 K-Means Clustering I
 
 ### GUI Overview
 
-![Application GUI](results/gui_overview.png)
+<img width="1916" height="1134" alt="image" src="https://github.com/user-attachments/assets/38ac90ec-c894-4945-9026-8cbf89fda833" />
+
 
 The interface is divided into three main areas:
 
@@ -631,4 +632,5 @@ Overall Misclassification Rate: 28.5%
       rerun K-Means. Observe how the centroids and assignments change. You will
       likely see two groups merge into a single cluster.
 ```
+
 

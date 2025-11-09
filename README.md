@@ -1,9 +1,5 @@
 # L15: Interactive K-Means Clustering Educational Simulator
 
-# L15: Interactive K-Means Clustering Educational Simulator
-
-![K-Means Banner](docs/banner.png)
-
 **Transform abstract K-Means theory into tangible, visual learning!** This educational tool is designed for students, developers, and data science enthusiasts who want to build deep, intuitive understanding of how K-Means clustering works.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
@@ -635,3 +631,4 @@ Overall Misclassification Rate: 28.5%
       rerun K-Means. Observe how the centroids and assignments change. You will
       likely see two groups merge into a single cluster.
 ```
+

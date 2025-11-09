@@ -451,6 +451,7 @@ Planned features for v2.0:
 ## 🧪 Experiment 1
 
 ![Experiment 1](results/experiment_1_plot.png)
+<img width="1908" height="1133" alt="image" src="https://github.com/user-attachments/assets/8570b56c-9125-43a8-9aa6-4d8a2db4fea4" />
 
 ### Analysis
 
@@ -511,6 +512,7 @@ Overall Misclassification Rate: 0.7%
 ## 🧪 Experiment 2
 
 ![Experiment 2](results/experiment_2_plot.png)
+<img width="1912" height="1136" alt="image" src="https://github.com/user-attachments/assets/893ad024-023a-4b60-9525-5e1de7481035" />
 
 ### Analysis
 
@@ -574,6 +576,7 @@ Overall Misclassification Rate: 20.2%
 ## 🧪 Experiment 3
 
 ![Experiment 3](results/experiment_3_plot.png)
+<img width="1914" height="1142" alt="image" src="https://github.com/user-attachments/assets/e6d88245-5110-427d-a10f-1e6d17f4cf3e" />
 
 ### Analysis
 
@@ -632,5 +635,6 @@ Overall Misclassification Rate: 28.5%
       rerun K-Means. Observe how the centroids and assignments change. You will
       likely see two groups merge into a single cluster.
 ```
+
 
 

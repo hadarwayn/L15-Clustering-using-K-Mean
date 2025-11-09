@@ -1,0 +1,50 @@
+
+╔══════════════════════════════════════════════════════╗
+║           K-MEANS CLUSTERING ANALYSIS                ║
+╠══════════════════════════════════════════════════════╣
+║ Metric                  | Value                      ║
+╟─────────────────────────|────────────────────────────╢
+║ Convergence             | 4 iterations                  
+║ Inertia (WCSS)          | 1,839.75                       
+║ Silhouette Score        | 0.731                  
+║ Between-Cluster Scatter | 75,937.54                  
+╚══════════════════════════════════════════════════════╝
+
+--- Overall Clustering Quality ---
+✅ EXCELLENT (Silhouette: 0.731)
+   The clusters are tight and very well-separated. The high silhouette score
+   indicates that points are much closer to their own cluster's center than
+   to other clusters. K-Means has successfully identified the natural groups.
+
+--- Group-by-Group Analysis ---
+
+▶️ Group A (True Color: #E69F00):
+   - Purity: 100.0% of its points were correctly assigned to Cluster 0.
+   - Misclassified: 0 points (0.0%) were assigned elsewhere.
+
+▶️ Group B (True Color: #56B4E9):
+   - Purity: 98.5% of its points were correctly assigned to Cluster 1.
+   - Misclassified: 3 points (1.5%) were assigned elsewhere.
+
+▶️ Group C (True Color: #009E73):
+   - Purity: 99.5% of its points were correctly assigned to Cluster 2.
+   - Misclassified: 1 points (0.5%) were assigned elsewhere.
+
+Overall Misclassification Rate: 0.7%
+
+--- Centroid Drift Analysis ---
+   'Drift' is the distance between a group's true center and the K-Means centroid.
+   Large drift indicates that the cluster's center was 'pulled' by other groups.
+   ✅ Group A ↔ Cluster 0: Drift of 0.13 units.
+   ✅ Group B ↔ Cluster 1: Drift of 0.11 units.
+   ✅ Group C ↔ Cluster 2: Drift of 0.21 units.
+
+
+--- Educational Insights ---
+   🧠 Why did K-Means work well? The current data likely fits the assumptions
+      of K-Means: the groups are relatively spherical, well-separated, and have
+      similar density. This is the ideal scenario for this algorithm.
+
+   💡 Experiment Idea: Try dragging one group directly on top of another and
+      rerun K-Means. Observe how the centroids and assignments change. You will
+      likely see two groups merge into a single cluster.

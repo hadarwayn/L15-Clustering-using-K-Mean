@@ -1,0 +1,53 @@
+
+╔══════════════════════════════════════════════════════╗
+║           K-MEANS CLUSTERING ANALYSIS                ║
+╠══════════════════════════════════════════════════════╣
+║ Metric                  | Value                      ║
+╟─────────────────────────|────────────────────────────╢
+║ Convergence             | 14 iterations                  
+║ Inertia (WCSS)          | 1,121.08                       
+║ Silhouette Score        | 0.447                  
+║ Between-Cluster Scatter | 3,796.64                  
+╚══════════════════════════════════════════════════════╝
+
+--- Overall Clustering Quality ---
+❌ POOR (Silhouette: 0.447)
+   The clusters are highly overlapped or ill-defined. K-Means is struggling
+   to find a good fit. This often happens when the underlying groups are not
+   spherical, have widely different variances, or are very close together.
+
+--- Group-by-Group Analysis ---
+
+▶️ Group A (True Color: #E69F00):
+   - Purity: 52.0% of its points were correctly assigned to Cluster 0.
+   - Misclassified: 96 points (48.0%) were assigned elsewhere.
+
+▶️ Group B (True Color: #56B4E9):
+   - Purity: 63.0% of its points were correctly assigned to Cluster 1.
+   - Misclassified: 74 points (37.0%) were assigned elsewhere.
+
+▶️ Group C (True Color: #009E73):
+   - Purity: 99.5% of its points were correctly assigned to Cluster 2.
+   - Misclassified: 1 points (0.5%) were assigned elsewhere.
+
+Overall Misclassification Rate: 28.5%
+
+--- Centroid Drift Analysis ---
+   'Drift' is the distance between a group's true center and the K-Means centroid.
+   Large drift indicates that the cluster's center was 'pulled' by other groups.
+   ⚠️ Group A ↔ Cluster 0: Drift of 0.96 units.
+   ⚠️ Group B ↔ Cluster 1: Drift of 0.85 units.
+   ✅ Group C ↔ Cluster 2: Drift of 0.06 units.
+
+
+--- Educational Insights ---
+   🧠 Why did K-Means perform poorly? K-Means makes three key assumptions:
+      1. Clusters are spherical (like circles).
+      2. Clusters have similar sizes and densities.
+      3. It uses distance-to-center to assign points.
+   Your current data likely violates one or more of these. For example, an
+   'exploded' group is no longer spherical, causing K-Means to split it.
+
+   💡 Experiment Idea: Try dragging one group directly on top of another and
+      rerun K-Means. Observe how the centroids and assignments change. You will
+      likely see two groups merge into a single cluster.

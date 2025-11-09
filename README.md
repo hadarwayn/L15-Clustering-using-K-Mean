@@ -1,5 +1,7 @@
 # L15: Interactive K-Means Clustering Educational Simulator
 
+# L15: Interactive K-Means Clustering Educational Simulator
+
 ![K-Means Banner](docs/banner.png)
 
 **Transform abstract K-Means theory into tangible, visual learning!** This educational tool is designed for students, developers, and data science enthusiasts who want to build deep, intuitive understanding of how K-Means clustering works.

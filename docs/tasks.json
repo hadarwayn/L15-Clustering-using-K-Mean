@@ -1,0 +1,2075 @@
+{
+  "project": {
+    "name": "L15 - Interactive K-Means Clustering Educational Simulator",
+    "version": "1.0.0",
+    "description": "Interactive GUI for learning K-Means clustering through Gaussian data manipulation",
+    "repository": "https://github.com/hadarwayn/L15-Clustering-using-K-Mean.git",
+    "reference": "Dr. Yoram Segal, K-MEAN Book v2.0, Chapter 11"
+  },
+
+  "metadata": {
+    "total_phases": 5,
+    "estimated_duration": "5 weeks",
+    "priority_levels": {
+      "CRITICAL": "Must-have for MVP",
+      "HIGH": "Important for user experience",
+      "MEDIUM": "Enhances functionality",
+      "LOW": "Nice-to-have features"
+    },
+    "status_codes": {
+      "TODO": "Not started",
+      "IN_PROGRESS": "Currently working",
+      "BLOCKED": "Waiting on dependency",
+      "TESTING": "Implementation complete, testing",
+      "DONE": "Completed and verified"
+    }
+  },
+
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Foundation - Data Generation & K-Means Core",
+      "duration": "Week 1",
+      "goal": "Core data generation and K-Means logic working",
+      "deliverable": "Command-line script that generates 3 groups and runs K-Means",
+      "tasks": [
+        {
+          "id": "P1-T1",
+          "title": "Project Setup & Environment",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "description": "Initialize project structure and development environment",
+          "subtasks": [
+            {
+              "id": "P1-T1.1",
+              "description": "Create project directory structure",
+              "details": [
+                "Navigate to: /mnt/c/2025AIDEV/L15/",
+                "Create: L15-HomeAssignment-K-Mean-Clustering/",
+                "Create subdirs: src/, docs/, results/, tests/"
+              ],
+              "commands": [
+                "cd /mnt/c/2025AIDEV/L15",
+                "mkdir -p L15-HomeAssignment-K-Mean-Clustering/{src,docs,results,tests}",
+                "cd L15-HomeAssignment-K-Mean-Clustering"
+              ]
+            },
+            {
+              "id": "P1-T1.2",
+              "description": "Initialize Git repository",
+              "commands": [
+                "git init",
+                "git remote add origin https://github.com/hadarwayn/L15-Clustering-using-K-Mean.git"
+              ]
+            },
+            {
+              "id": "P1-T1.3",
+              "description": "Create virtual environment with UV",
+              "commands": [
+                "uv venv",
+                "source .venv/bin/activate  # On Windows/WSL",
+                "# OR: .venv\\Scripts\\activate  # On PowerShell"
+              ]
+            },
+            {
+              "id": "P1-T1.4",
+              "description": "Create requirements.txt",
+              "file": "requirements.txt",
+              "content": [
+                "numpy==1.26.4",
+                "matplotlib==3.9.2",
+                "scikit-learn==1.5.2"
+              ]
+            },
+            {
+              "id": "P1-T1.5",
+              "description": "Install dependencies",
+              "commands": [
+                "uv pip install -r requirements.txt"
+              ]
+            },
+            {
+              "id": "P1-T1.6",
+              "description": "Create .gitignore",
+              "file": ".gitignore",
+              "content": [
+                "# Virtual Environment",
+                ".venv/",
+                "venv/",
+                "env/",
+                "",
+                "# Python",
+                "__pycache__/",
+                "*.pyc",
+                "*.pyo",
+                "*.pyd",
+                ".Python",
+                "*.so",
+                "",
+                "# IDE",
+                ".vscode/",
+                ".idea/",
+                "*.swp",
+                "*.swo",
+                "",
+                "# Results",
+                "results/temp/",
+                "*.png.bak",
+                "",
+                "# OS",
+                ".DS_Store",
+                "Thumbs.db"
+              ]
+            }
+          ],
+          "verification": [
+            "Directory structure exists",
+            "Virtual environment activated",
+            "All packages installed successfully"
+          ]
+        },
+        {
+          "id": "P1-T2",
+          "title": "Implement GaussianGroup Class",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P1-T1"],
+          "file": "src/data_model.py",
+          "description": "Create class for generating and manipulating Gaussian-distributed clusters",
+          "subtasks": [
+            {
+              "id": "P1-T2.1",
+              "description": "Implement __init__ method",
+              "requirements": [
+                "Accept parameters: mean, cov, n_points, color, label",
+                "Validate covariance matrix (positive definite)",
+                "Store attributes",
+                "Call generate_points() automatically"
+              ]
+            },
+            {
+              "id": "P1-T2.2",
+              "description": "Implement generate_points() method",
+              "requirements": [
+                "Use np.random.multivariate_normal()",
+                "Return (n_points, 2) array",
+                "Set random seed for reproducibility"
+              ],
+              "formula": "X ~ N(μ, Σ)"
+            },
+            {
+              "id": "P1-T2.3",
+              "description": "Implement move() method",
+              "requirements": [
+                "Accept new_mean as np.ndarray",
+                "Update self.mean",
+                "Regenerate points with new mean"
+              ]
+            },
+            {
+              "id": "P1-T2.4",
+              "description": "Implement explode() method",
+              "requirements": [
+                "Accept scale_factor (default 2.0)",
+                "Multiply covariance matrix by scale_factor",
+                "Regenerate points with new covariance"
+              ],
+              "formula": "Σ_new = scale_factor × Σ_old"
+            },
+            {
+              "id": "P1-T2.5",
+              "description": "Implement get_statistics() method",
+              "requirements": [
+                "Return dict with: mean, empirical_mean, cov, empirical_cov",
+                "Use np.mean() and np.cov() for empirical values"
+              ]
+            },
+            {
+              "id": "P1-T2.6",
+              "description": "Add input validation",
+              "requirements": [
+                "Check mean is 2D vector",
+                "Check cov is 2×2 matrix",
+                "Validate positive definite: np.linalg.eigvals(cov) > 0",
+                "Raise ValueError with clear messages"
+              ]
+            }
+          ],
+          "testing": [
+            "Generate 200 points from each group",
+            "Verify empirical mean ≈ specified mean (within 0.5)",
+            "Verify points shape is (200, 2)",
+            "Test move() changes mean correctly",
+            "Test explode() increases variance"
+          ]
+        },
+        {
+          "id": "P1-T3",
+          "title": "Implement K-Means Execution Function",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P1-T2"],
+          "file": "src/k_means_logic.py",
+          "description": "Create function to run K-Means and compute metrics",
+          "subtasks": [
+            {
+              "id": "P1-T3.1",
+              "description": "Implement run_kmeans() function",
+              "requirements": [
+                "Import: from sklearn.cluster import KMeans",
+                "Parameters: data (np.ndarray), n_clusters=3, random_state=42",
+                "Initialize KMeans with: init='k-means++', n_init=10, max_iter=300",
+                "Fit model and predict labels"
+              ]
+            },
+            {
+              "id": "P1-T3.2",
+              "description": "Compute Inertia (WCSS)",
+              "requirements": [
+                "Extract from kmeans.inertia_",
+                "Formula: Σ_k Σ_{i∈C_k} ||x_i - μ_k||²"
+              ]
+            },
+            {
+              "id": "P1-T3.3",
+              "description": "Compute Silhouette Score",
+              "requirements": [
+                "Import: from sklearn.metrics import silhouette_score",
+                "Call: silhouette_score(data, labels)",
+                "Handle edge case: all points in one cluster"
+              ]
+            },
+            {
+              "id": "P1-T3.4",
+              "description": "Compute Between-Cluster Scatter (BCS)",
+              "requirements": [
+                "Calculate global mean: μ = (1/n) Σx_i",
+                "Formula: BCS = Σ_k |C_k| × ||μ_k - μ||²",
+                "Implement from scratch (not in sklearn)"
+              ]
+            },
+            {
+              "id": "P1-T3.5",
+              "description": "Return results dictionary",
+              "requirements": [
+                "Keys: labels, centroids, inertia, silhouette, bcs, n_iter",
+                "Ensure all values are Python native types (not numpy)"
+              ]
+            }
+          ],
+          "testing": [
+            "Test with well-separated clusters (Silhouette > 0.7)",
+            "Test with overlapping clusters (Silhouette < 0.5)",
+            "Verify BCS + WCSS = TSS (Total Sum of Squares)",
+            "Check n_iter < max_iter (convergence)"
+          ]
+        },
+        {
+          "id": "P1-T4",
+          "title": "Create Initial Configuration",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 1,
+          "dependencies": ["P1-T2"],
+          "file": "src/data_model.py",
+          "description": "Define default 3-group configuration",
+          "subtasks": [
+            {
+              "id": "P1-T4.1",
+              "description": "Create INITIAL_GROUPS dictionary",
+              "content": {
+                "A": {
+                  "mean": [2, 3],
+                  "cov": [[1.0, 0.3], [0.3, 1.0]],
+                  "color": "#E69F00",
+                  "label": "Group A",
+                  "n_points": 200
+                },
+                "B": {
+                  "mean": [8, 4],
+                  "cov": [[1.2, -0.2], [-0.2, 0.8]],
+                  "color": "#56B4E9",
+                  "label": "Group B",
+                  "n_points": 200
+                },
+                "C": {
+                  "mean": [5, 8],
+                  "cov": [[0.9, 0.1], [0.1, 1.1]],
+                  "color": "#009E73",
+                  "label": "Group C",
+                  "n_points": 200
+                }
+              }
+            },
+            {
+              "id": "P1-T4.2",
+              "description": "Create initialize_groups() function",
+              "requirements": [
+                "Return list of 3 GaussianGroup instances",
+                "Use INITIAL_GROUPS configuration",
+                "Set random seed: np.random.seed(42)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P1-T5",
+          "title": "Write Unit Tests",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P1-T2", "P1-T3"],
+          "file": "tests/test_data_model.py",
+          "description": "Create test suite for data generation and K-Means",
+          "subtasks": [
+            {
+              "id": "P1-T5.1",
+              "description": "Test GaussianGroup initialization",
+              "test_cases": [
+                "Valid initialization succeeds",
+                "Invalid covariance raises ValueError",
+                "Points have correct shape",
+                "Empirical mean within tolerance"
+              ]
+            },
+            {
+              "id": "P1-T5.2",
+              "description": "Test move() method",
+              "test_cases": [
+                "Mean updates correctly",
+                "Points regenerate",
+                "New empirical mean matches new mean"
+              ]
+            },
+            {
+              "id": "P1-T5.3",
+              "description": "Test explode() method",
+              "test_cases": [
+                "Covariance multiplied by scale_factor",
+                "Empirical variance increases",
+                "Points spread wider"
+              ]
+            },
+            {
+              "id": "P1-T5.4",
+              "description": "Test K-Means execution",
+              "test_cases": [
+                "Returns all required keys",
+                "Labels have correct range [0, 1, 2]",
+                "Centroids shape is (3, 2)",
+                "Silhouette in valid range [-1, 1]"
+              ]
+            },
+            {
+              "id": "P1-T5.5",
+              "description": "Test determinism",
+              "test_cases": [
+                "Same random_state → same results",
+                "Different random_state → different init centroids"
+              ]
+            }
+          ],
+          "commands": [
+            "pytest tests/test_data_model.py -v"
+          ]
+        },
+        {
+          "id": "P1-T6",
+          "title": "Create Command-Line Demo",
+          "priority": "MEDIUM",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P1-T3", "P1-T4"],
+          "file": "src/cli_demo.py",
+          "description": "Simple script to verify Phase 1 functionality",
+          "subtasks": [
+            {
+              "id": "P1-T6.1",
+              "description": "Generate 3 groups and print statistics"
+            },
+            {
+              "id": "P1-T6.2",
+              "description": "Run K-Means and print results"
+            },
+            {
+              "id": "P1-T6.3",
+              "description": "Create simple matplotlib plot (no GUI)"
+            }
+          ],
+          "verification": [
+            "Script runs without errors",
+            "Prints inertia and Silhouette score",
+            "Displays plot with 3 colored groups"
+          ]
+        }
+      ]
+    },
+
+    {
+      "phase": 2,
+      "name": "GUI Development - Tkinter Interface",
+      "duration": "Week 2",
+      "goal": "Interactive interface with basic controls",
+      "deliverable": "GUI displays groups and responds to button clicks",
+      "tasks": [
+        {
+          "id": "P2-T1",
+          "title": "Create Main Application Window",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P1-T6"],
+          "file": "src/k_means_app.py",
+          "description": "Initialize Tkinter window with layout structure",
+          "subtasks": [
+            {
+              "id": "P2-T1.1",
+              "description": "Create KMeansApp class",
+              "requirements": [
+                "Inherit from tk.Tk or create tk.Tk() instance",
+                "Set window title: 'K-Means Clustering Simulator'",
+                "Set window size: 1400×900",
+                "Configure grid layout: 3 columns, 2 rows"
+              ]
+            },
+            {
+              "id": "P2-T1.2",
+              "description": "Create layout frames",
+              "frames": [
+                "control_frame (left, 20% width)",
+                "canvas_frame (center-right, 60% width)",
+                "results_frame (bottom, full width, 20% height)"
+              ]
+            },
+            {
+              "id": "P2-T1.3",
+              "description": "Initialize data model",
+              "requirements": [
+                "Call initialize_groups() from data_model",
+                "Store groups in self.groups",
+                "Store original labels in self.original_labels"
+              ]
+            },
+            {
+              "id": "P2-T1.4",
+              "description": "Create matplotlib Figure",
+              "requirements": [
+                "Create Figure with size (10, 8)",
+                "Add single Axes with equal aspect ratio",
+                "Set title, xlabel, ylabel",
+                "Enable grid"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-T2",
+          "title": "Implement Control Panel Widgets",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P2-T1"],
+          "file": "src/k_means_app.py",
+          "description": "Create all interactive controls",
+          "subtasks": [
+            {
+              "id": "P2-T2.1",
+              "description": "Group Selector Dropdown",
+              "requirements": [
+                "Widget: ttk.Combobox",
+                "Values: ['Group A', 'Group B', 'Group C']",
+                "Default: 'Group A'",
+                "Store selection in self.selected_group"
+              ]
+            },
+            {
+              "id": "P2-T2.2",
+              "description": "Explode Button",
+              "requirements": [
+                "Widget: tk.Button",
+                "Text: 'Explode Selected Group'",
+                "Command: self.on_explode_clicked",
+                "Color: Orange background"
+              ]
+            },
+            {
+              "id": "P2-T2.3",
+              "description": "Run K-Means Button",
+              "requirements": [
+                "Widget: tk.Button",
+                "Text: 'Run K-Means (K=3)'",
+                "Command: self.on_run_kmeans_clicked",
+                "Color: Blue background"
+              ]
+            },
+            {
+              "id": "P2-T2.4",
+              "description": "Reset Button",
+              "requirements": [
+                "Widget: tk.Button",
+                "Text: 'Reset to Initial'",
+                "Command: self.on_reset_clicked",
+                "Color: Red background"
+              ]
+            },
+            {
+              "id": "P2-T2.5",
+              "description": "Variance Multiplier Slider",
+              "requirements": [
+                "Widget: tk.Scale",
+                "Range: 1.0 to 5.0",
+                "Resolution: 0.1",
+                "Orientation: horizontal",
+                "Default: 2.0",
+                "Label: 'Variance Multiplier'"
+              ]
+            },
+            {
+              "id": "P2-T2.6",
+              "description": "Status Label",
+              "requirements": [
+                "Widget: tk.Label",
+                "Display last action performed",
+                "Update on every button click"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-T3",
+          "title": "Embed Matplotlib Canvas",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P2-T1"],
+          "file": "src/k_means_app.py",
+          "description": "Integrate matplotlib plot into Tkinter window",
+          "subtasks": [
+            {
+              "id": "P2-T3.1",
+              "description": "Create FigureCanvasTkAgg",
+              "requirements": [
+                "Import: from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg",
+                "Create canvas from Figure",
+                "Pack canvas into canvas_frame"
+              ]
+            },
+            {
+              "id": "P2-T3.2",
+              "description": "Add toolbar (optional but useful)",
+              "requirements": [
+                "Import: from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk",
+                "Create toolbar from canvas",
+                "Pack toolbar above canvas"
+              ]
+            },
+            {
+              "id": "P2-T3.3",
+              "description": "Implement initial plot",
+              "requirements": [
+                "Call self.plot_groups()",
+                "Display 3 groups with their colors",
+                "Show true means as semi-transparent X markers",
+                "Add legend"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-T4",
+          "title": "Create Results Panel",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P2-T1"],
+          "file": "src/k_means_app.py",
+          "description": "Display K-Means metrics and explanations",
+          "subtasks": [
+            {
+              "id": "P2-T4.1",
+              "description": "Create scrolled text widget",
+              "requirements": [
+                "Widget: tk.Text with scrollbar",
+                "Height: 10 lines",
+                "Font: Courier 10 (monospace)",
+                "Read-only: state='disabled'"
+              ]
+            },
+            {
+              "id": "P2-T4.2",
+              "description": "Implement update_results() method",
+              "requirements": [
+                "Accept kmeans_results dict",
+                "Format metrics in table layout",
+                "Display in results panel",
+                "Clear previous results first"
+              ]
+            },
+            {
+              "id": "P2-T4.3",
+              "description": "Add clear_results() method",
+              "requirements": [
+                "Enable text widget",
+                "Delete all content",
+                "Disable text widget"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-T5",
+          "title": "Implement Event Handlers (Stubs)",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P2-T2"],
+          "file": "src/k_means_app.py",
+          "description": "Create handler methods that will be fully implemented in Phase 3",
+          "subtasks": [
+            {
+              "id": "P2-T5.1",
+              "description": "on_explode_clicked() stub",
+              "requirements": [
+                "Get selected group from dropdown",
+                "Get scale_factor from slider",
+                "Print to console (actual logic in Phase 3)",
+                "Update status label"
+              ]
+            },
+            {
+              "id": "P2-T5.2",
+              "description": "on_run_kmeans_clicked() stub",
+              "requirements": [
+                "Print 'Running K-Means...' to console",
+                "Update status label",
+                "Disable button temporarily"
+              ]
+            },
+            {
+              "id": "P2-T5.3",
+              "description": "on_reset_clicked() stub",
+              "requirements": [
+                "Print 'Resetting...' to console",
+                "Call initialize_groups()",
+                "Replot",
+                "Clear results panel"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2-T6",
+          "title": "Create main.py Entry Point",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 1,
+          "dependencies": ["P2-T1"],
+          "file": "src/main.py",
+          "description": "Application launcher",
+          "content": [
+            "#!/usr/bin/env python3",
+            "\"\"\"",
+            "L15 - Interactive K-Means Clustering Simulator",
+            "Entry point for the application.",
+            "\"\"\"",
+            "from k_means_app import KMeansApp",
+            "",
+            "if __name__ == '__main__':",
+            "    app = KMeansApp()",
+            "    app.mainloop()"
+          ],
+          "commands": [
+            "chmod +x src/main.py",
+            "python src/main.py"
+          ]
+        }
+      ]
+    },
+
+    {
+      "phase": 3,
+      "name": "Visualization & Interaction",
+      "duration": "Week 3",
+      "goal": "Dual-color rendering and drag functionality",
+      "deliverable": "Fully interactive plot with drag capability",
+      "tasks": [
+        {
+          "id": "P3-T1",
+          "title": "Implement Dual-Color Point Plotting",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P2-T3"],
+          "file": "src/k_means_app.py",
+          "description": "Show original group (fill) and K-Means cluster (edge) colors",
+          "subtasks": [
+            {
+              "id": "P3-T1.1",
+              "description": "Update plot_groups() method",
+              "requirements": [
+                "Plot each point with: facecolor=group.color, edgecolor='none' (initially)",
+                "Set marker size: s=30, linewidth=2, alpha=0.6",
+                "Store scatter plot artists in self.scatter_plots dict"
+              ]
+            },
+            {
+              "id": "P3-T1.2",
+              "description": "Create update_cluster_colors() method",
+              "requirements": [
+                "Accept kmeans_labels array",
+                "Map cluster labels to edge colors",
+                "Use same color palette as groups",
+                "Update scatter plot edgecolors"
+              ]
+            },
+            {
+              "id": "P3-T1.3",
+              "description": "Define cluster color mapping",
+              "requirements": [
+                "Cluster 0 → #E69F00 (orange)",
+                "Cluster 1 → #56B4E9 (blue)",
+                "Cluster 2 → #009E73 (green)",
+                "Store in class constant CLUSTER_COLORS"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3-T2",
+          "title": "Add Centroid Visualization",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P3-T1"],
+          "file": "src/k_means_app.py",
+          "description": "Display true means and K-Means centroids",
+          "subtasks": [
+            {
+              "id": "P3-T2.1",
+              "description": "Plot true means (initial)",
+              "requirements": [
+                "Marker: 'X', size: 200",
+                "Color: group color with alpha=0.5",
+                "Label: 'True Mean {label}'",
+                "Plot in plot_groups() method"
+              ]
+            },
+            {
+              "id": "P3-T2.2",
+              "description": "Create plot_centroids() method",
+              "requirements": [
+                "Accept centroids array (3, 2)",
+                "Marker: 'X', size: 250",
+                "Color: black, alpha=1.0",
+                "Label: 'K-Means Centroid {i}'",
+                "Edge color: white, linewidth: 2"
+              ]
+            },
+            {
+              "id": "P3-T2.3",
+              "description": "Store centroid artists",
+              "requirements": [
+                "Save in self.centroid_plots",
+                "Enable removal/update on subsequent runs"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3-T3",
+          "title": "Implement Drag-and-Drop Functionality",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 5,
+          "dependencies": ["P3-T1"],
+          "file": "src/k_means_app.py",
+          "description": "Enable dragging groups to new positions",
+          "subtasks": [
+            {
+              "id": "P3-T3.1",
+              "description": "Connect mouse events to canvas",
+              "requirements": [
+                "self.canvas.mpl_connect('button_press_event', self.on_mouse_press)",
+                "self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)",
+                "self.canvas.mpl_connect('button_release_event', self.on_mouse_release)"
+              ]
+            },
+            {
+              "id": "P3-T3.2",
+              "description": "Implement on_mouse_press()",
+              "requirements": [
+                "Check if click is inside plot axes",
+                "Determine which group is nearest to click",
+                "Store: self.dragging_group = group_id",
+                "Store: self.drag_offset = [click_x - mean_x, click_y - mean_y]"
+              ]
+            },
+            {
+              "id": "P3-T3.3",
+              "description": "Implement on_mouse_move()",
+              "requirements": [
+                "If self.dragging_group is None, return",
+                "Calculate new_mean = [mouse_x - offset_x, mouse_y - offset_y]",
+                "Clip to axes limits (boundary checking)",
+                "Call self.groups[dragging_group].move(new_mean)",
+                "Update plot: clear and redraw"
+              ]
+            },
+            {
+              "id": "P3-T3.4",
+              "description": "Implement on_mouse_release()",
+              "requirements": [
+                "Set self.dragging_group = None",
+                "Update status label: 'Group {label} moved to ({x:.2f}, {y:.2f})'",
+                "Force final plot update"
+              ]
+            },
+            {
+              "id": "P3-T3.5",
+              "description": "Add boundary clipping",
+              "requirements": [
+                "Get axes limits: xlim, ylim",
+                "Clip new_mean to: [xlim[0], xlim[1]], [ylim[0], ylim[1]]",
+                "Prevent groups from going off-screen"
+              ]
+            }
+          ],
+          "testing": [
+            "Click and drag Group A to new position",
+            "Verify points move with mouse",
+            "Verify boundary clipping works",
+            "Verify status label updates"
+          ]
+        },
+        {
+          "id": "P3-T4",
+          "title": "Complete Explode Functionality",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P2-T5"],
+          "file": "src/k_means_app.py",
+          "description": "Implement actual explosion logic",
+          "subtasks": [
+            {
+              "id": "P3-T4.1",
+              "description": "Complete on_explode_clicked() implementation",
+              "requirements": [
+                "Get selected_group from dropdown",
+                "Get scale_factor from slider",
+                "Find group object by label",
+                "Call group.explode(scale_factor)",
+                "Replot groups",
+                "Update status: 'Group {label} exploded (variance ×{scale})'"
+              ]
+            },
+            {
+              "id": "P3-T4.2",
+              "description": "Add visual feedback",
+              "requirements": [
+                "Disable Explode button during operation",
+                "Show loading cursor",
+                "Re-enable button after completion"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3-T5",
+          "title": "Complete K-Means Execution Handler",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P3-T1", "P3-T2"],
+          "file": "src/k_means_app.py",
+          "description": "Run K-Means and update visualization",
+          "subtasks": [
+            {
+              "id": "P3-T5.1",
+              "description": "Complete on_run_kmeans_clicked() implementation",
+              "requirements": [
+                "Collect all points from self.groups into single array",
+                "Create original_labels array (0, 0, ..., 1, 1, ..., 2, 2, ...)",
+                "Import and call run_kmeans(data, n_clusters=3)",
+                "Store results in self.kmeans_results"
+              ]
+            },
+            {
+              "id": "P3-T5.2",
+              "description": "Update visualization with results",
+              "requirements": [
+                "Call update_cluster_colors(kmeans_results['labels'])",
+                "Call plot_centroids(kmeans_results['centroids'])",
+                "Update legend to show both group colors and cluster assignments",
+                "Redraw canvas"
+              ]
+            },
+            {
+              "id": "P3-T5.3",
+              "description": "Update results panel (basic)",
+              "requirements": [
+                "Call update_results(kmeans_results)",
+                "Display: inertia, silhouette, bcs, n_iter",
+                "Format numbers: 2 decimal places"
+              ]
+            },
+            {
+              "id": "P3-T5.4",
+              "description": "Add timing information",
+              "requirements": [
+                "Use time.time() to measure execution",
+                "Display: 'Clustering completed in {time:.3f} seconds'",
+                "Update status label"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3-T6",
+          "title": "Implement Reset Functionality",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P3-T5"],
+          "file": "src/k_means_app.py",
+          "description": "Reset to initial state",
+          "subtasks": [
+            {
+              "id": "P3-T6.1",
+              "description": "Complete on_reset_clicked() implementation",
+              "requirements": [
+                "Call initialize_groups() to recreate groups",
+                "Clear self.kmeans_results",
+                "Clear centroid plots",
+                "Reset edge colors to 'none'",
+                "Clear results panel",
+                "Replot groups with initial configuration"
+              ]
+            },
+            {
+              "id": "P3-T6.2",
+              "description": "Reset all UI elements",
+              "requirements": [
+                "Reset dropdown to 'Group A'",
+                "Reset slider to 2.0",
+                "Update status: 'Reset to initial configuration'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P3-T7",
+          "title": "Add Loading Indicators",
+          "priority": "MEDIUM",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P3-T5"],
+          "file": "src/k_means_app.py",
+          "description": "Visual feedback during operations",
+          "subtasks": [
+            {
+              "id": "P3-T7.1",
+              "description": "Create loading cursor",
+              "requirements": [
+                "Use: self.config(cursor='watch') during operations",
+                "Restore: self.config(cursor='') after completion"
+              ]
+            },
+            {
+              "id": "P3-T7.2",
+              "description": "Add progress indicator for K-Means",
+              "requirements": [
+                "Update status label: 'Running K-Means...'",
+                "Use self.update() to force GUI refresh",
+                "Change to 'K-Means completed' after"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "phase": 4,
+      "name": "Statistical Explanation Engine",
+      "duration": "Week 4",
+      "goal": "Generate educational interpretations",
+      "deliverable": "Results panel with context-aware explanations",
+      "tasks": [
+        {
+          "id": "P4-T1",
+          "title": "Implement Scenario Detection",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P1-T3"],
+          "file": "src/k_means_logic.py",
+          "description": "Identify clustering patterns and behaviors",
+          "subtasks": [
+            {
+              "id": "P4-T1.1",
+              "description": "Detect perfect separation",
+              "requirements": [
+                "Check: silhouette > 0.7",
+                "Return: {'type': 'perfect', 'confidence': silhouette}"
+              ]
+            },
+            {
+              "id": "P4-T1.2",
+              "description": "Detect moderate overlap",
+              "requirements": [
+                "Check: 0.5 < silhouette <= 0.7",
+                "Calculate misclassification rate",
+                "Return: {'type': 'overlap', 'rate': misclass_rate}"
+              ]
+            },
+            {
+              "id": "P4-T1.3",
+              "description": "Detect high confusion",
+              "requirements": [
+                "Check: silhouette < 0.5",
+                "Return: {'type': 'confused', 'silhouette': score}"
+              ]
+            },
+            {
+              "id": "P4-T1.4",
+              "description": "Detect group merging",
+              "requirements": [
+                "Check if one cluster contains >90% of two original groups",
+                "Return: {'type': 'merged', 'groups': [A, B]}"
+              ]
+            },
+            {
+              "id": "P4-T1.5",
+              "description": "Detect group splitting",
+              "requirements": [
+                "Check if one original group divided into 2+ clusters",
+                "Return: {'type': 'split', 'group': A, 'into': [0, 2]}"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-T2",
+          "title": "Calculate Centroid Drift",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P1-T3"],
+          "file": "src/k_means_logic.py",
+          "description": "Measure distance between true means and K-Means centroids",
+          "subtasks": [
+            {
+              "id": "P4-T2.1",
+              "description": "Implement compute_centroid_drift()",
+              "requirements": [
+                "Accept: true_means (list of 3 means), centroids (3×2 array)",
+                "Match centroids to groups (find nearest)",
+                "Calculate: drift = ||true_mean - matched_centroid||",
+                "Return: list of (group_label, drift_distance)"
+              ]
+            },
+            {
+              "id": "P4-T2.2",
+              "description": "Define drift threshold",
+              "requirements": [
+                "DRIFT_THRESHOLD = 0.5 units",
+                "Flag drifts > threshold as significant"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-T3",
+          "title": "Create Explanation Templates",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P4-T1", "P4-T2"],
+          "file": "src/k_means_logic.py",
+          "description": "Generate layman-friendly text explanations",
+          "subtasks": [
+            {
+              "id": "P4-T3.1",
+              "description": "Template for perfect separation",
+              "content": "✅ EXCELLENT CLUSTERING\n   Silhouette score of {silhouette:.3f} indicates tight, well-separated clusters.\n   K-Means successfully identified all three natural groups.\n   All centroids are close to true means (max drift: {max_drift:.2f})."
+            },
+            {
+              "id": "P4-T3.2",
+              "description": "Template for moderate overlap",
+              "content": "⚠️  MODERATE CLUSTERING\n   Silhouette score of {silhouette:.3f} suggests some overlap.\n   Misclassification rate: {misclass_rate:.1%}\n   This happens when groups are moved close together or have high variance.\n   {misclass_details}"
+            },
+            {
+              "id": "P4-T3.3",
+              "description": "Template for high confusion",
+              "content": "❌ POOR CLUSTERING\n   Silhouette score of {silhouette:.3f} indicates significant overlap.\n   K-Means struggles when clusters are not well-separated.\n   Consider: Are groups too close? Did you explode a group too much?"
+            },
+            {
+              "id": "P4-T3.4",
+              "description": "Template for centroid drift",
+              "content": "\n📍 CENTROID DRIFT DETECTED:\n   {group_label}'s K-Means centroid moved {drift:.2f} units from true mean.\n   This indicates boundary effects from nearby clusters."
+            },
+            {
+              "id": "P4-T3.5",
+              "description": "Template for variance explosion",
+              "content": "\n💥 VARIANCE EXPLOSION EFFECT:\n   {group_label} was exploded by {scale_factor}×.\n   Its points scattered widely, causing misclassifications.\n   K-Means minimizes distance, so nearby points from other groups may be captured."
+            }
+          ]
+        },
+        {
+          "id": "P4-T4",
+          "title": "Implement generate_explanation() Function",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 5,
+          "dependencies": ["P4-T3"],
+          "file": "src/k_means_logic.py",
+          "description": "Main explanation generation logic",
+          "subtasks": [
+            {
+              "id": "P4-T4.1",
+              "description": "Function signature",
+              "signature": "def generate_explanation(groups: list, kmeans_results: dict, original_labels: np.ndarray) -> str"
+            },
+            {
+              "id": "P4-T4.2",
+              "description": "Extract metrics",
+              "requirements": [
+                "Get: silhouette, inertia, bcs, n_iter, centroids, labels",
+                "Calculate: misclassification rate",
+                "Calculate: centroid drifts"
+              ]
+            },
+            {
+              "id": "P4-T4.3",
+              "description": "Detect scenarios",
+              "requirements": [
+                "Call detect_separation_quality()",
+                "Call detect_group_merging()",
+                "Call detect_group_splitting()",
+                "Call compute_centroid_drift()"
+              ]
+            },
+            {
+              "id": "P4-T4.4",
+              "description": "Build explanation string",
+              "requirements": [
+                "Start with header (box drawing characters)",
+                "Add metrics table",
+                "Add scenario-based interpretation",
+                "Add drift warnings if applicable",
+                "Add educational insights"
+              ]
+            },
+            {
+              "id": "P4-T4.5",
+              "description": "Add educational context",
+              "requirements": [
+                "Explain WHY this happened",
+                "Reference K-Means assumptions (spherical clusters, distance minimization)",
+                "Suggest experiments: 'Try moving groups further apart...'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-T5",
+          "title": "Enhance Results Panel Display",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P4-T4"],
+          "file": "src/k_means_app.py",
+          "description": "Format and display detailed explanations",
+          "subtasks": [
+            {
+              "id": "P4-T5.1",
+              "description": "Update update_results() method",
+              "requirements": [
+                "Call generate_explanation()",
+                "Display full explanation in results panel",
+                "Use monospace font for alignment",
+                "Enable colored text for ✅, ⚠️, ❌ symbols"
+              ]
+            },
+            {
+              "id": "P4-T5.2",
+              "description": "Add scrolling support",
+              "requirements": [
+                "Ensure scrollbar works for long explanations",
+                "Auto-scroll to top on new results"
+              ]
+            },
+            {
+              "id": "P4-T5.3",
+              "description": "Add copy-to-clipboard button",
+              "requirements": [
+                "Add button: 'Copy Results'",
+                "Copy full explanation text to clipboard",
+                "Show tooltip: 'Copied!'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P4-T6",
+          "title": "Create Example Scenarios Documentation",
+          "priority": "MEDIUM",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P4-T5"],
+          "file": "docs/example_scenarios.md",
+          "description": "Document common scenarios for testing",
+          "scenarios": [
+            {
+              "name": "Scenario 1: Perfect Separation",
+              "setup": "Initial configuration (no changes)",
+              "expected": "Silhouette > 0.7, all groups correctly identified"
+            },
+            {
+              "name": "Scenario 2: Moderate Overlap",
+              "setup": "Drag Group A toward Group B (distance ≈ 3 units)",
+              "expected": "Silhouette ≈ 0.55, some misclassification"
+            },
+            {
+              "name": "Scenario 3: Variance Explosion",
+              "setup": "Explode Group C with scale 3×",
+              "expected": "Group C splits, Silhouette drops"
+            },
+            {
+              "name": "Scenario 4: Complete Merger",
+              "setup": "Drag Group A on top of Group B",
+              "expected": "Two clusters identified instead of three"
+            },
+            {
+              "name": "Scenario 5: Centroid Drift",
+              "setup": "Create triangle formation (all groups equidistant)",
+              "expected": "Centroids at triangle vertices, drifts detected"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "phase": 5,
+      "name": "Documentation & Polish",
+      "duration": "Week 5",
+      "goal": "Educational README and final testing",
+      "deliverable": "Complete, documented, tested application",
+      "tasks": [
+        {
+          "id": "P5-T1",
+          "title": "Write Comprehensive README.md",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 6,
+          "dependencies": ["P4-T6"],
+          "file": "README.md",
+          "description": "Educational guide for K-Means clustering",
+          "subtasks": [
+            {
+              "id": "P5-T1.1",
+              "description": "Section 1: What is K-Means Clustering?",
+              "requirements": [
+                "Layman explanation with analogy",
+                "Everyday example: 'Like sorting colored socks...'",
+                "Visual diagram (ASCII or image)",
+                "Reading level: 8th grade"
+              ]
+            },
+            {
+              "id": "P5-T1.2",
+              "description": "Section 2: Installation & Setup",
+              "requirements": [
+                "Prerequisites checklist",
+                "UV virtual environment creation (step-by-step)",
+                "Dependency installation commands",
+                "Verification steps",
+                "Troubleshooting common issues"
+              ]
+            },
+            {
+              "id": "P5-T1.3",
+              "description": "Section 3: How to Use the Simulator",
+              "requirements": [
+                "Basic controls explanation",
+                "Screenshot of GUI with labels",
+                "Step-by-step first experiment",
+                "Keyboard shortcuts (if any)"
+              ]
+            },
+            {
+              "id": "P5-T1.4",
+              "description": "Section 4: Understanding the Results",
+              "requirements": [
+                "What is Inertia (WCSS)?",
+                "What is Silhouette Score?",
+                "How to read dual-color points",
+                "Why centroids drift",
+                "Interpreting the explanation panel"
+              ]
+            },
+            {
+              "id": "P5-T1.5",
+              "description": "Section 5: Experiment Ideas",
+              "requirements": [
+                "5 guided experiments with expected outcomes",
+                "What to observe in each",
+                "Learning objective for each experiment"
+              ]
+            },
+            {
+              "id": "P5-T1.6",
+              "description": "Section 6: Statistical Deep Dive",
+              "requirements": [
+                "K-Means algorithm (step-by-step)",
+                "Mathematical formulas (LaTeX)",
+                "Connection to Gaussian Mixtures",
+                "When K-Means fails (common pitfalls)"
+              ]
+            },
+            {
+              "id": "P5-T1.7",
+              "description": "Section 7: Results & Screenshots",
+              "requirements": [
+                "Minimum 5 example experiments",
+                "Each with: before/after images, metrics, explanation",
+                "Store in results/ directory"
+              ]
+            },
+            {
+              "id": "P5-T1.8",
+              "description": "Section 8: Learning Outcomes Quiz",
+              "requirements": [
+                "10 questions to self-assess understanding",
+                "Answers provided at end",
+                "Example: 'Can you explain why Silhouette score dropped?'"
+              ]
+            },
+            {
+              "id": "P5-T1.9",
+              "description": "Section 9: References",
+              "requirements": [
+                "Dr. Yoram Segal's K-MEAN Book (full citation)",
+                "Lloyd (1982) paper",
+                "Arthur & Vassilvitskii (2007) - k-means++",
+                "Rousseeuw (1987) - Silhouette",
+                "Online resources"
+              ]
+            },
+            {
+              "id": "P5-T1.10",
+              "description": "Section 10: Troubleshooting & FAQ",
+              "requirements": [
+                "Common errors and solutions",
+                "Performance tips",
+                "Platform-specific issues"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T2",
+          "title": "Generate Example Experiments",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P4-T6"],
+          "file": "results/",
+          "description": "Create 5+ documented experiments with screenshots",
+          "subtasks": [
+            {
+              "id": "P5-T2.1",
+              "description": "Experiment 1: Initial State (Perfect Separation)",
+              "steps": [
+                "Launch application",
+                "Run K-Means without changes",
+                "Screenshot: results/experiment_1_initial.png",
+                "Save metrics: results/experiment_1_metrics.txt"
+              ]
+            },
+            {
+              "id": "P5-T2.2",
+              "description": "Experiment 2: Creating Overlap",
+              "steps": [
+                "Drag Group A toward Group B (2 units apart)",
+                "Run K-Means",
+                "Screenshot: results/experiment_2_overlap.png",
+                "Document misclassification rate"
+              ]
+            },
+            {
+              "id": "P5-T2.3",
+              "description": "Experiment 3: Variance Explosion",
+              "steps": [
+                "Reset",
+                "Explode Group C (scale 3×)",
+                "Run K-Means",
+                "Screenshot: results/experiment_3_exploded.png",
+                "Show group splitting"
+              ]
+            },
+            {
+              "id": "P5-T2.4",
+              "description": "Experiment 4: Complete Merger",
+              "steps": [
+                "Drag Group A on top of Group B (same position)",
+                "Run K-Means",
+                "Screenshot: results/experiment_4_merged.png",
+                "Show only 2 clusters identified"
+              ]
+            },
+            {
+              "id": "P5-T2.5",
+              "description": "Experiment 5: Extreme Explosion",
+              "steps": [
+                "Explode all 3 groups (scale 5×)",
+                "Run K-Means",
+                "Screenshot: results/experiment_5_chaos.png",
+                "Show poor Silhouette score"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T3",
+          "title": "Create Metrics Comparison Table",
+          "priority": "MEDIUM",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P5-T2"],
+          "file": "results/metrics_comparison.csv",
+          "description": "Tabular summary of all experiments",
+          "format": {
+            "columns": [
+              "Experiment",
+              "Description",
+              "Inertia",
+              "Silhouette",
+              "BCS",
+              "Iterations",
+              "Misclassification_Rate"
+            ],
+            "example_row": "1,Initial State,347.82,0.78,1205.43,5,0.02"
+          }
+        },
+        {
+          "id": "P5-T4",
+          "title": "User Acceptance Testing",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P5-T1"],
+          "description": "Test with non-technical users",
+          "subtasks": [
+            {
+              "id": "P5-T4.1",
+              "description": "Recruit 3 test users",
+              "requirements": [
+                "No prior ML knowledge required",
+                "Diverse age range (teens to adults)",
+                "Record screen during testing"
+              ]
+            },
+            {
+              "id": "P5-T4.2",
+              "description": "Create testing protocol",
+              "tasks": [
+                "Task 1: Install and launch application",
+                "Task 2: Run initial K-Means",
+                "Task 3: Drag a group and observe changes",
+                "Task 4: Explode a group",
+                "Task 5: Explain what K-Means does (in own words)"
+              ]
+            },
+            {
+              "id": "P5-T4.3",
+              "description": "Collect feedback",
+              "metrics": [
+                "Time to complete each task",
+                "Number of errors/confusion points",
+                "Clarity rating (1-5 scale)",
+                "Free-form suggestions"
+              ]
+            },
+            {
+              "id": "P5-T4.4",
+              "description": "Implement improvements",
+              "requirements": [
+                "Fix critical usability issues",
+                "Clarify confusing explanations",
+                "Add missing instructions"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T5",
+          "title": "Code Quality & Documentation Review",
+          "priority": "HIGH",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P4-T5"],
+          "description": "Ensure professional code standards",
+          "subtasks": [
+            {
+              "id": "P5-T5.1",
+              "description": "Add docstrings to all functions",
+              "requirements": [
+                "Use NumPy docstring format",
+                "Include: description, parameters, returns, examples",
+                "Minimum: module, class, and public method docstrings"
+              ]
+            },
+            {
+              "id": "P5-T5.2",
+              "description": "Add type hints",
+              "requirements": [
+                "All function signatures: parameters and return types",
+                "Import from typing: List, Dict, Tuple, Optional",
+                "Use np.ndarray for arrays"
+              ]
+            },
+            {
+              "id": "P5-T5.3",
+              "description": "Code formatting",
+              "requirements": [
+                "Run: black src/",
+                "Line length: 88 characters",
+                "Consistent indentation: 4 spaces"
+              ]
+            },
+            {
+              "id": "P5-T5.4",
+              "description": "Lint code",
+              "requirements": [
+                "Run: pylint src/",
+                "Fix warnings (target: score > 8.0/10)",
+                "Address: unused imports, variables, style issues"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T6",
+          "title": "Final Testing & Bug Fixes",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 4,
+          "dependencies": ["P5-T4"],
+          "description": "Comprehensive testing and debugging",
+          "subtasks": [
+            {
+              "id": "P5-T6.1",
+              "description": "Functional testing checklist",
+              "tests": [
+                "All buttons work correctly",
+                "Dragging moves correct group",
+                "Explosion increases variance",
+                "K-Means executes without errors",
+                "Dual-color rendering works",
+                "Centroids display correctly",
+                "Results panel updates",
+                "Reset restores initial state",
+                "Boundary clipping prevents off-screen dragging"
+              ]
+            },
+            {
+              "id": "P5-T6.2",
+              "description": "Cross-platform testing",
+              "platforms": [
+                "Windows WSL (Ubuntu)",
+                "Linux (native)",
+                "macOS (if available)"
+              ]
+            },
+            {
+              "id": "P5-T6.3",
+              "description": "Edge case testing",
+              "cases": [
+                "All groups at same position",
+                "Extreme explosion (scale 10×)",
+                "Rapid button clicking",
+                "Drag to boundary limits",
+                "Run K-Means multiple times consecutively"
+              ]
+            },
+            {
+              "id": "P5-T6.4",
+              "description": "Performance testing",
+              "requirements": [
+                "K-Means < 100ms for 600 points",
+                "GUI responsive during drag",
+                "Memory usage < 200 MB"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T7",
+          "title": "Prepare GitHub Repository",
+          "priority": "CRITICAL",
+          "status": "TODO",
+          "estimated_hours": 2,
+          "dependencies": ["P5-T1", "P5-T6"],
+          "description": "Final repository setup and first commit",
+          "subtasks": [
+            {
+              "id": "P5-T7.1",
+              "description": "Review file structure",
+              "requirements": [
+                "Verify all files in correct locations",
+                "Check .gitignore excludes venv, __pycache__",
+                "Ensure results/ contains example outputs"
+              ]
+            },
+            {
+              "id": "P5-T7.2",
+              "description": "Add LICENSE file",
+              "requirements": [
+                "Choose license (MIT recommended for educational projects)",
+                "Generate from: https://choosealicense.com/",
+                "Add to root directory"
+              ]
+            },
+            {
+              "id": "P5-T7.3",
+              "description": "Create initial commit",
+              "commands": [
+                "git add .",
+                "git commit -m 'Initial commit: L15 K-Means Clustering Simulator'",
+                "git branch -M main"
+              ]
+            },
+            {
+              "id": "P5-T7.4",
+              "description": "Push to GitHub",
+              "commands": [
+                "git remote add origin https://github.com/hadarwayn/L15-Clustering-using-K-Mean.git",
+                "git push -u origin main"
+              ]
+            },
+            {
+              "id": "P5-T7.5",
+              "description": "Verify GitHub repository",
+              "requirements": [
+                "README displays correctly with images",
+                "All files uploaded",
+                "Repository description set",
+                "Topics/tags added: python, machine-learning, k-means, clustering, education"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P5-T8",
+          "title": "Create Project Presentation (Optional)",
+          "priority": "LOW",
+          "status": "TODO",
+          "estimated_hours": 3,
+          "dependencies": ["P5-T7"],
+          "file": "docs/presentation.pdf",
+          "description": "Slide deck for course submission",
+          "slides": [
+            "Title: L15 - Interactive K-Means Clustering Simulator",
+            "Motivation: Why visualize K-Means?",
+            "Technical approach: Gaussian groups + scikit-learn",
+            "Key features: Drag, explode, dual-color visualization",
+            "Demo: Live or video recording",
+            "Results: 5 experiments with insights",
+            "Learning outcomes: What students will understand",
+            "Future enhancements",
+            "References & acknowledgments"
+          ]
+        }
+      ]
+    }
+  ],
+
+  "testing_strategy": {
+    "unit_tests": {
+      "file": "tests/test_data_model.py",
+      "coverage_target": "80%",
+      "tests": [
+        "test_gaussian_generation",
+        "test_move_group",
+        "test_explode_group",
+        "test_invalid_covariance",
+        "test_deterministic_generation"
+      ]
+    },
+    "integration_tests": {
+      "file": "tests/test_integration.py",
+      "tests": [
+        "test_full_workflow_drag_kmeans",
+        "test_explode_then_kmeans",
+        "test_reset_functionality"
+      ]
+    },
+    "manual_tests": {
+      "description": "GUI interactions tested manually",
+      "checklist": [
+        "All buttons functional",
+        "Dragging smooth and responsive",
+        "Visual elements render correctly",
+        "Explanations accurate and clear"
+      ]
+    }
+  },
+
+  "dependencies": {
+    "python_version": "3.12+",
+    "core_libraries": {
+      "numpy": "1.26.4",
+      "matplotlib": "3.9.2",
+      "scikit-learn": "1.5.2"
+    },
+    "built_in_libraries": [
+      "tkinter",
+      "time",
+      "typing"
+    ],
+    "development_tools": {
+      "pytest": "7.4.3",
+      "black": "23.12.1",
+      "pylint": "3.0.3"
+    }
+  },
+
+  "file_structure": {
+    "root": "L15-HomeAssignment-K-Mean-Clustering/",
+    "directories": {
+      "src": "Source code files",
+      "docs": "Documentation and PRD",
+      "results": "Example experiments and outputs",
+      "tests": "Unit and integration tests"
+    },
+    "files": {
+      "README.md": "Main educational documentation",
+      "requirements.txt": "Python dependencies",
+      ".gitignore": "Git exclusions",
+      "LICENSE": "MIT License",
+      "src/main.py": "Application entry point (~50 lines)",
+      "src/data_model.py": "GaussianGroup class (~200 lines)",
+      "src/k_means_app.py": "GUI implementation (~300 lines)",
+      "src/k_means_logic.py": "Clustering and explanations (~200 lines)",
+      "docs/PRD.md": "Product Requirements Document",
+      "docs/tasks.json": "This file",
+      "docs/example_scenarios.md": "Documented test scenarios",
+      "tests/test_data_model.py": "Unit tests for data generation",
+      "tests/test_k_means_logic.py": "Unit tests for K-Means",
+      "results/experiment_1_initial.png": "Screenshot - perfect separation",
+      "results/experiment_2_overlap.png": "Screenshot - moderate overlap",
+      "results/experiment_3_exploded.png": "Screenshot - variance explosion",
+      "results/experiment_4_merged.png": "Screenshot - complete merger",
+      "results/experiment_5_chaos.png": "Screenshot - extreme explosion",
+      "results/metrics_comparison.csv": "Summary table of all experiments"
+    }
+  },
+
+  "risk_mitigation": {
+    "risks": [
+      {
+        "risk": "Tkinter threading issues with matplotlib",
+        "probability": "Medium",
+        "impact": "High",
+        "mitigation": "Use canvas.draw() instead of plt.show(), avoid threading"
+      },
+      {
+        "risk": "Matplotlib memory leak on repeated plots",
+        "probability": "Low",
+        "impact": "Medium",
+        "mitigation": "Call ax.clear() before each replot, manage figure lifecycle"
+      },
+      {
+        "risk": "Dragging performance with 600 points",
+        "probability": "Medium",
+        "impact": "Low",
+        "mitigation": "Reduce plot updates during drag, use blit for animation"
+      },
+      {
+        "risk": "User drags group off-screen",
+        "probability": "High",
+        "impact": "Low",
+        "mitigation": "Implement boundary clipping in on_mouse_move()"
+      },
+      {
+        "risk": "Singular covariance after explosion",
+        "probability": "Low",
+        "impact": "Medium",
+        "mitigation": "Add small regularization term to covariance matrix"
+      }
+    ]
+  },
+
+  "success_criteria": {
+    "functional": [
+      "All GUI controls work without errors",
+      "K-Means executes and returns valid results",
+      "Dual-color visualization clearly distinguishable",
+      "Explanations generated for all scenarios",
+      "Application runs on Windows/WSL, Linux, macOS"
+    ],
+    "educational": [
+      "Non-technical user can explain K-Means after 3 experiments",
+      "README understandable at 8th-grade reading level",
+      "User can identify when/why K-Means fails"
+    ],
+    "technical": [
+      "Code quality: pylint score > 8.0/10",
+      "Test coverage: > 80% for core logic",
+      "Performance: K-Means < 100ms for 600 points",
+      "Documentation: All public functions have docstrings"
+    ]
+  },
+
+  "timeline_summary": {
+    "week_1": {
+      "phase": 1,
+      "deliverable": "Command-line demo with data generation and K-Means",
+      "hours": 15
+    },
+    "week_2": {
+      "phase": 2,
+      "deliverable": "GUI with basic controls and matplotlib canvas",
+      "hours": 15
+    },
+    "week_3": {
+      "phase": 3,
+      "deliverable": "Fully interactive plot with drag and dual-color rendering",
+      "hours": 18
+    },
+    "week_4": {
+      "phase": 4,
+      "deliverable": "Statistical explanation engine with scenario detection",
+      "hours": 18
+    },
+    "week_5": {
+      "phase": 5,
+      "deliverable": "Complete documentation, testing, and GitHub repository",
+      "hours": 24
+    },
+    "total_estimated_hours": 90
+  },
+
+  "next_steps": {
+    "immediate": [
+      "Get PRD approved by instructor",
+      "Set up project directory structure (P1-T1)",
+      "Create virtual environment with UV",
+      "Begin Phase 1: Implement GaussianGroup class (P1-T2)"
+    ],
+    "checkpoints": [
+      {
+        "after_phase_1": "Verify command-line demo works before starting GUI"
+      },
+      {
+        "after_phase_2": "Ensure GUI layout correct before adding interactions"
+      },
+      {
+        "after_phase_3": "Test all interactions thoroughly before explanation engine"
+      },
+      {
+        "after_phase_4": "Validate explanations with sample users"
+      },
+      {
+        "after_phase_5": "Final review and instructor demo"
+      }
+    ]
+  },
+
+  "reference_materials": {
+    "primary_source": {
+      "title": "K-MEAN Book, Chapter 11: K-Means Algorithm – Statistical Learning and Data Mining",
+      "author": "Dr. Yoram Segal",
+      "version": "2.0",
+      "date": "October 2025",
+      "sections_referenced": [
+        "11.1: Clustering Problem",
+        "11.3: K-Means Algorithm",
+        "11.4: Practical Implementation",
+        "11.5: Limitations of K-Means",
+        "11.7: Silhouette Analysis"
+      ]
+    },
+    "academic_papers": [
+      {
+        "title": "Least squares quantization in PCM",
+        "author": "Lloyd, S. P.",
+        "year": 1982,
+        "journal": "IEEE Transactions on Information Theory",
+        "relevance": "Original K-Means algorithm"
+      },
+      {
+        "title": "k-means++: The advantages of careful seeding",
+        "author": "Arthur, D., & Vassilvitskii, S.",
+        "year": 2007,
+        "conference": "ACM-SIAM Symposium on Discrete Algorithms",
+        "relevance": "Smart initialization used in scikit-learn"
+      },
+      {
+        "title": "Silhouettes: A graphical aid to the interpretation and validation of cluster analysis",
+        "author": "Rousseeuw, P. J.",
+        "year": 1987,
+        "journal": "Journal of Computational and Applied Mathematics",
+        "relevance": "Silhouette score metric"
+      }
+    ],
+    "online_resources": [
+      "scikit-learn KMeans documentation: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html",
+      "Matplotlib event handling: https://matplotlib.org/stable/users/event_handling.html",
+      "Tkinter GUI programming: https://docs.python.org/3/library/tkinter.html"
+    ]
+  },
+
+  "glossary": {
+    "terms": [
+      {
+        "term": "Centroid",
+        "definition": "The geometric center (mean) of all points in a cluster",
+        "formula": "μ_k = (1/|C_k|) Σ_{i∈C_k} x_i"
+      },
+      {
+        "term": "Inertia (WCSS)",
+        "definition": "Within-Cluster Sum of Squares - total squared distance of points to their centroids",
+        "formula": "J = Σ_k Σ_{i∈C_k} ||x_i - μ_k||²"
+      },
+      {
+        "term": "Silhouette Score",
+        "definition": "Measure of cluster separation quality, range [-1, 1]",
+        "interpretation": ">0.7: excellent, 0.5-0.7: good, <0.5: poor"
+      },
+      {
+        "term": "Covariance Matrix",
+        "definition": "2×2 matrix describing variance and correlation of 2D Gaussian distribution",
+        "example": "[[1.0, 0.3], [0.3, 1.0]]"
+      },
+      {
+        "term": "Ground Truth",
+        "definition": "The original, known group assignments before K-Means",
+        "note": "Represented by fill color in visualization"
+      },
+      {
+        "term": "Cluster Assignment",
+        "definition": "Which cluster K-Means assigned each point to",
+        "note": "Represented by edge color in visualization"
+      },
+      {
+        "term": "Centroid Drift",
+        "definition": "Distance between true mean and K-Means computed centroid",
+        "threshold": ">0.5 units considered significant"
+      },
+      {
+        "term": "Variance Explosion",
+        "definition": "Artificially increasing spread of points by scaling covariance matrix",
+        "example": "Multiplying Σ by 2.0 doubles variance"
+      }
+    ]
+  },
+
+  "code_style_guide": {
+    "naming_conventions": {
+      "classes": "PascalCase (e.g., GaussianGroup)",
+      "functions": "snake_case (e.g., run_kmeans)",
+      "constants": "UPPER_SNAKE_CASE (e.g., DRIFT_THRESHOLD)",
+      "private_methods": "_leading_underscore (e.g., _compute_drift)"
+    },
+    "documentation": {
+      "docstring_style": "NumPy format",
+      "example": "def run_kmeans(data: np.ndarray, n_clusters: int = 3) -> dict:\n    \"\"\"\n    Execute K-Means clustering.\n    \n    Parameters\n    ----------\n    data : np.ndarray, shape (n, 2)\n        Input points.\n    n_clusters : int, default=3\n        Number of clusters.\n    \n    Returns\n    -------\n    dict\n        Clustering results with keys: labels, centroids, inertia, silhouette.\n    \"\"\""
+    },
+    "imports": {
+      "order": [
+        "1. Standard library",
+        "2. Third-party (numpy, matplotlib, sklearn)",
+        "3. Local modules"
+      ],
+      "example": "import time\nfrom typing import List, Dict\n\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.cluster import KMeans\n\nfrom data_model import GaussianGroup"
+    },
+    "line_length": 88,
+    "indentation": "4 spaces (no tabs)"
+  },
+
+  "troubleshooting_guide": {
+    "common_issues": [
+      {
+        "issue": "ModuleNotFoundError: No module named 'tkinter'",
+        "solution": "Install tkinter: sudo apt-get install python3-tk (Ubuntu/WSL)",
+        "platforms": ["Linux", "WSL"]
+      },
+      {
+        "issue": "Matplotlib plot not updating in GUI",
+        "solution": "Call canvas.draw() after updating figure",
+        "code": "self.canvas.draw()"
+      },
+      {
+        "issue": "ValueError: covariance matrix is not positive definite",
+        "solution": "Add small regularization: cov += 1e-6 * np.eye(2)",
+        "location": "data_model.py, GaussianGroup.__init__()"
+      },
+      {
+        "issue": "Drag is laggy with 600 points",
+        "solution": "Reduce update frequency or use smaller point size",
+        "optimization": "Only redraw on mouse release, not every motion event"
+      },
+      {
+        "issue": "Silhouette score returns NaN",
+        "solution": "Check if all points in one cluster, handle edge case",
+        "code": "if len(np.unique(labels)) < 2: return 0.0"
+      }
+    ]
+  },
+
+  "version_history": {
+    "v1.0.0": {
+      "date": "TBD",
+      "description": "Initial release",
+      "features": [
+        "3 Gaussian groups with drag and explode",
+        "K-Means clustering with K=3",
+        "Dual-color visualization",
+        "Statistical explanation engine",
+        "Educational README"
+      ]
+    },
+    "future_versions": {
+      "v1.1.0": {
+        "planned_features": [
+          "Variable K (2-5 clusters)",
+          "Elbow method for K selection",
+          "Animation mode (show iterations)",
+          "Export results to PDF"
+        ]
+      },
+      "v2.0.0": {
+        "planned_features": [
+          "K-Medoids comparison",
+          "DBSCAN algorithm",
+          "3D visualization",
+          "Multiple datasets"
+        ]
+      }
+    }
+  },
+
+  "author": {
+    "name": "[Your Name]",
+    "course": "AI Developer Expert",
+    "project": "L15 - Interactive K-Means Clustering Simulator",
+    "instructor": "Dr. Yoram Segal",
+    "date_started": "November 2025",
+    "repository": "https://github.com/hadarwayn/L15-Clustering-using-K-Mean.git"
+  },
+
+  "acknowledgments": [
+    "Dr. Yoram Segal - K-MEAN Book and course instruction",
+    "scikit-learn developers - KMeans implementation",
+    "matplotlib team - Visualization library",
+    "AI Developer Expert course - Educational framework"
+  ]
+}
+      
